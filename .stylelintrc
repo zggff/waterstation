@@ -1,0 +1,7 @@
+{
+  "extends": "stylelint-config-airbnb",
+  "rules": {
+    "indentation": 4,
+    "max-nesting-depth": null
+  }
+}
