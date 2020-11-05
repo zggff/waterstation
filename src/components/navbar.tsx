@@ -1,79 +1,69 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import styles from '@styles/navbar.module.scss'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import NavbarItem, { NavigationLinkClass } from '@components/NavbarSubComponents/NavbarItem'
+// NavigationLink - abstraction over NavbarSubComponents, that supports dropdown menu support
+
+const navLinks: Array<NavigationLinkClass> = [
+    {
+        label: 'АкваЭкспресс',
+        path: '/',
+        isLogo: true,
+    },
+    {
+        label: 'товары',
+        path: '/products',
+    },
+    {
+        label: 'о нас',
+        path: '/about',
+        dropdown: [
+            {
+                label: 'история',
+                path: '/about/history',
+            },
+            {
+                label: 'fwaefewa',
+                path: '/about/fawef',
+            },
+            {
+                label: 'fewafe',
+                path: '/about/fe',
+            },
+        ],
+    },
+
+    {
+        label: 'contact',
+        path: '/contact',
+    },
+]
 
 const Navbar = (): JSX.Element => {
-    const ref = useRef(null)
-    const router = useRouter()
-    const [navActive, setNavActive] = useState(false)
-
-    const handleClickOutside = useCallback(
-        (e: MouseEvent) => {
-            if (!ref.current.contains(e.target)) {
-                setNavActive(false)
-                document.removeEventListener('click', handleClickOutside, true)
-            }
-        },
-        [setNavActive]
-    )
-    const changeNav = () => {
-        setNavActive(!navActive)
-        document.addEventListener('click', handleClickOutside, true)
-    }
-    useEffect(() => {
-        return () => {
-            document.removeEventListener('click', handleClickOutside, true)
-        }
-    }, [])
-
-    function setMultipleClassNames(...classes) {
-        return classes.join(' ')
+    const [navbarActive, setNavbarActive] = useState(true)
+    const invertNavbarActive = () => {
+        setNavbarActive(!navbarActive)
     }
     return (
-        <nav className={styles.navbar} ref={ref}>
-            <span className={styles.checkButton}>
-                <FontAwesomeIcon icon={faBars} className={styles.checkButton} onClick={changeNav} />
-            </span>
-            <ul className={styles.navItems}>
-                <li
-                    className={setMultipleClassNames(
-                        router.pathname === '/' ? styles.active : '',
-                        styles.logo
-                    )}
-                >
-                    <Link href="/">waterstation</Link>
-                </li>
-                <li
-                    className={setMultipleClassNames(
-                        router.pathname === '/about' ? styles.active : ''
-                    )}
-                >
-                    <Link href="/about">о нас</Link>
-                </li>
-                <li
-                    className={setMultipleClassNames(
-                        router.pathname === '/goodsAndServices' ? styles.active : ''
-                    )}
-                >
-                    <Link href="/goodsAndServices">товары и услуги</Link>
-                </li>
-                <li
-                    className={setMultipleClassNames(
-                        router.pathname === '/contact' ? styles.active : ''
-                    )}
-                >
-                    <Link href="contact">контакты</Link>
-                </li>
-                <li
-                    className={setMultipleClassNames(
-                        router.pathname === '/articles' ? styles.active : ''
-                    )}
-                >
-                    <Link href="/articles">статьи</Link>
-                </li>
+        <nav className={styles.navbar}>
+            <div
+                role="button"
+                className={styles.navbarActiveCheckbox}
+                onKeyDown={invertNavbarActive}
+                onClick={invertNavbarActive}
+                // onFocus={invertNavbarActive}
+                tabIndex={0}
+            >
+                <FontAwesomeIcon className={styles.icon} icon={faBars} />
+            </div>
+
+            <ul className={[styles.navbarContent, navbarActive ? styles.active : ''].join(' ')}>
+                {navLinks.map((navLink) => (
+                    <li className={styles.navbarMainElement} key={navLink.path}>
+                        <NavbarItem NavItem={navLink} />
+                    </li>
+                ))}
             </ul>
         </nav>
     )

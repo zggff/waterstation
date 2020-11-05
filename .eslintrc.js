@@ -34,6 +34,8 @@ module.exports = {
         'prettier/prettier': 'error',
         'no-use-before-define': 'off',
         '@typescript-eslint/no-use-before-define': 'error',
+        'no-underscore-dangle': 'off',
+        'import/prefer-default-export': 'off',
     },
     settings: {
         'import/resolver': {

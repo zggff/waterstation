@@ -1,10 +1,10 @@
 import React from 'react'
 import Head from 'next/head'
-import Navbar from '~/src/components/navbar'
+import Navbar from '@components/navbar'
 import Footer from '~/src/components/footer'
 
 interface IMainLayoutProps {
-    children: Array<JSX.Element> | JSX.Element
+    children: React.ReactNode
     title: string
 }
 
@@ -14,13 +14,13 @@ function MainLayout({ children, title }: IMainLayoutProps): JSX.Element {
             <Head>
                 <title>{title} | waterstation</title>
             </Head>
-            <div className="contentWrapper">
-                <div className="container">
-                    <Navbar />
-                    <main className="content">{children}</main>
-                </div>
-                <Footer />
-            </div>
+            {/* <div className="contentWrapper"> */}
+            {/*    <div className="container"> */}
+            {/* <Navbar /> */}
+            <main className="content">{children}</main>
+            {/*    </div> */}
+            {/*    <Footer /> */}
+            {/* </div> */}
         </>
     )
 }
