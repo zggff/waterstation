@@ -69,18 +69,4 @@ const Index = (): JSX.Element => {
     )
 }
 
-Index.getInitialProps = async ({ req }) => {
-    if (!req) {
-        return {
-            initialProducts: [],
-        }
-    }
-    const baseUrl = process.env.BASE_URL
-    const response = await fetch(`${baseUrl}/api/products`)
-    const products: IResponse = await response.json()
-    return {
-        initialProducts: products.response,
-    }
-}
-
 export default Index

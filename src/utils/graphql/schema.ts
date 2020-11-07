@@ -1,34 +1,22 @@
-import { makeSchema, queryType } from '@nexus/schema'
-// import { makePrismaSchema, prismaObjectType } from 'nexus-prisma'
+import { makeSchema } from '@nexus/schema'
 import path from 'path'
-// import { Query, Mutation } from '@utils/graphql/Types'
+import { Query, Mutation } from '@utils/graphql/Types'
 
-const Query = queryType({
-    definition(t) {
-        t.string('name', () => 'Zggff')
-    },
-})
-
-const types = { Query }
+const types = { Query, Mutation }
 
 export const schema = makeSchema({
     types,
+    outputs: {
+        schema: path.join(process.cwd(), 'schema.graphql'),
+        typegen: path.join(process.cwd(), 'src', 'utils', 'graphql', 'generated', 'nexus.ts'),
+    },
+    typegenAutoConfig: {
+        sources: [
+            {
+                alias: 'interfaces',
+                source: path.join(process.cwd(), 'src', 'utils', 'graphql', 'interfaces.ts'),
+                typeMatch: (type) => new RegExp(`(${type}Interface)`),
+            },
+        ],
+    },
 })
-// const schema = makeSchema({
-//     types,
-//     outputs: {
-//         schema: path.join(process.cwd(), 'schema.graphql'),
-//         typegen: path.join(process.cwd(), 'src', 'utils', 'graphql', 'generated', 'nexus.ts'),
-//     },
-//     typegenAutoConfig: {
-//         sources: [
-//             {
-//                 alias: 'interfaces',
-//                 source: path.join(process.cwd(), 'src', 'utils', 'graphql', 'interfaces.ts'),
-//                 typeMatch: (type) => new RegExp(`(${type}Interface)`),
-//             },
-//         ],
-//     },
-// })
-
-// export { schema }

@@ -53,13 +53,17 @@ export interface NexusGenFieldTypes {
   }
   Product: { // field return type
     description: string | null; // String
+    id: string | null; // ID
     images: Array<NexusGenRootTypes['Image'] | null> | null; // [Image]
     label: string | null; // String
     manufacturer: string | null; // String
     price: number | null; // Int
+    type: string | null; // String
   }
   Query: { // field return type
     product: NexusGenRootTypes['Product'] | null; // Product
+    products: Array<NexusGenRootTypes['Product'] | null> | null; // [Product]
+    productsCount: number | null; // Int
   }
 }
 
@@ -74,13 +78,17 @@ export interface NexusGenFieldTypeNames {
   }
   Product: { // field return type name
     description: 'String'
+    id: 'ID'
     images: 'Image'
     label: 'String'
     manufacturer: 'String'
     price: 'Int'
+    type: 'String'
   }
   Query: { // field return type name
     product: 'Product'
+    products: 'Product'
+    productsCount: 'Int'
   }
 }
 
@@ -107,6 +115,14 @@ export interface NexusGenArgTypes {
   Query: {
     product: { // args
       id: string; // String!
+    }
+    products: { // args
+      limit: number | null; // Int
+      offset?: number | null; // Int
+      type?: string | null; // String
+    }
+    productsCount: { // args
+      type?: string | null; // String
     }
   }
 }

@@ -12,6 +12,44 @@
     }
 }
 
+.productPage {
+    background-color: whitesmoke;
+    box-shadow: 0 1px 10px rgba(0,0,0,.3), 0 1px 10px rgba(0,0,0,.3);
+    margin: 1rem;
+    padding: 1rem;
+    display: grid;
+    grid-template-areas: "header header" "image price" "description description";
+    grid-template-columns: .7fr .1fr;
+    grid-template-rows: auto .8fr auto ;
+
+    .label {
+        grid-area: header;
+    }
+
+    .price {
+        grid-area: price;
+        padding: 1rem;
+
+    }
+
+    .imageSlider {
+        max-height: 50rem;
+        grid-area: image;
+
+        img {
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            object-fit: contain;
+        }
+    }
+
+    .description {
+        grid-area: description;
+    }
+}
+
 .productBox {
     height: 8rem;
     //margin-top: 1rem;

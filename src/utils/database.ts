@@ -4,7 +4,7 @@ const connection = {
     isConnected: 0,
 }
 
-const connect = async (): Promise<{ error: null }> => {
+export const connect = async (): Promise<{ error: null }> => {
     if (connection.isConnected) {
         return { error: null }
     }
@@ -18,9 +18,6 @@ const connect = async (): Promise<{ error: null }> => {
         connection.isConnected = db.connections[0].readyState
         return { error: null }
     } catch (e) {
-        console.log(e)
         return { error: e }
     }
 }
-
-export default connect

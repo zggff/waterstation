@@ -1,5 +1,6 @@
 import { arg, extendType } from '@nexus/schema'
 import Image from '@utils/MongoDBModels/image.model'
+import { connect } from '@utils/database'
 import Product from '@utils/MongoDBModels/product.model'
 
 const Mutation = extendType({
@@ -18,6 +19,7 @@ const Mutation = extendType({
                 }),
             },
             resolve: async (root, { src, alt }) => {
+                await connect()
                 const image = new Image({
                     src,
                     alt,
@@ -56,6 +58,7 @@ const Mutation = extendType({
                 }),
             },
             resolve: async (_, { type, label, manufacturer, price, images, description }) => {
+                await connect()
                 const product = new Product({
                     type,
                     label,

@@ -4,6 +4,8 @@ export interface ProductInterface {
     description: string
     price: number
     images: ImageInterface[]
+    id: string
+    type: string
 }
 
 export interface ImageInterface {

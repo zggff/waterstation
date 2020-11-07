@@ -11,19 +11,22 @@
     "start": "next start"
   },
   "dependencies": {
+    "@apollo/client": "^3.2.5",
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/react-fontawesome": "^0.1.11",
     "@nexus/schema": "^0.17.0",
-    "nexus-plugin-prisma": "0.19.0",
     "@types/mongoose": "^5.7.37",
     "apollo-server-micro": "^2.19.0",
     "graphql": "^15.4.0",
     "mongoose": "^5.10.11",
     "next": "^9.5.5",
+    "nexus-plugin-prisma": "0.19.0",
     "nexus-prisma": "^0.16.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-simple-image-slider": "^1.0.4",
+    "react-slideshow-image": "^3.3.1",
     "stylelint": "^13.7.2"
   },
   "devDependencies": {
