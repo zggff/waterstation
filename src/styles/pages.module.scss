@@ -1,0 +1,17 @@
+.coolList {
+    list-style: none;
+
+    li {
+        margin-top: 10px;
+        // padding-left: 0.5rem;
+
+        &::before {
+            content: '>';
+            color: var(--text-headers);
+            font-weight: bold;
+            font-size: smaller;
+            display: inline-block;
+            margin-right: 0.4rem;
+        }
+    }
+}

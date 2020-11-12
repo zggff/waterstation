@@ -1,18 +1,50 @@
 import React from 'react'
 import Head from 'next/head'
-import Navbar from '@components/navbar'
-import Footer from '~/src/components/footer'
+// import Navbar from '@components/navbar'
+// import Footer from '~/src/components/footer'
 
 interface IMainLayoutProps {
     children: React.ReactNode
-    title: string
+
+    title?: string
+
+    description?: string
+
+    keywords?: string[]
+
+    author?: string
 }
 
-function MainLayout({ children, title }: IMainLayoutProps): JSX.Element {
+const MainLayoutDefaultProps = {
+    title: 'Главная Страница',
+
+    description: 'Главная страница',
+
+    keywords: ['АкваЭкспресс', 'доставка воды', 'коломна', 'интернет магазин'],
+
+    author: 'zggff',
+}
+
+const MainLayout = ({
+    children,
+    title,
+    description,
+    keywords,
+    author,
+}: IMainLayoutProps): JSX.Element => {
     return (
         <>
             <Head>
-                <title>{title} | waterstation</title>
+                <title>{title} | АкваЭкспресс</title>
+                {description && (
+                    <meta
+                        name="description"
+                        content={`${description} | АкваЭкспресс - служба по доставке воды в Коломне`}
+                    />
+                )}
+                {author && <meta name="author" content={author} />}
+                {keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             </Head>
             {/* <div className="contentWrapper"> */}
             {/*    <div className="container"> */}
@@ -24,6 +56,8 @@ function MainLayout({ children, title }: IMainLayoutProps): JSX.Element {
         </>
     )
 }
+
+MainLayout.defaultProps = MainLayoutDefaultProps
 
 export { MainLayout }
 export type { IMainLayoutProps }

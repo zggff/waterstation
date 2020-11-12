@@ -24,6 +24,6 @@ type Product {
 
 type Query {
   product(id: String!): Product
-  products(limit: Int = 10, offset: Int = 0, type: String = ""): [Product]
+  products(limit: Int = 6, offset: Int = 0, type: String = ""): [Product]
   productsCount(type: String = ""): Int
 }

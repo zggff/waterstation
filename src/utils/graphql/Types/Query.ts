@@ -72,7 +72,7 @@ const Query = extendType({
                 limit: arg({
                     type: 'Int',
                     required: false,
-                    default: 10,
+                    default: 6,
                 }),
                 type: arg({
                     type: 'String',
@@ -81,7 +81,7 @@ const Query = extendType({
                 }),
             },
             // variables: {},
-            resolve: async (root, { offset, limit, type }, context, info) => {
+            resolve: async (root, { offset, limit, type }) => {
                 await connect()
 
                 const products: IProduct[] = await Product.find({

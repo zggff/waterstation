@@ -1,7 +1,5 @@
 import React from 'react'
 import { ImageInterface } from '@utils/graphql/interfaces'
-import { Slide } from 'react-slideshow-image'
-import 'react-slideshow-image/dist/styles.css'
 
 export interface Props {
     images: ImageInterface[]

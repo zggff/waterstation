@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { MainLayout } from '@components/main-layout'
-import { IResponse } from '@pages/api/products'
 
 import styles from '@styles/product.module.scss'
 import Link from 'next/link'
@@ -63,7 +62,6 @@ const Index = (): JSX.Element => {
                         </li>
                     ))}
                 </ul>
-                {/* {JSON.stringify(products)} */}
             </div>
         </MainLayout>
     )

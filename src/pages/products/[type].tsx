@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { MainLayout } from '@components/main-layout'
 import ProductBox from '@components/productBox'
@@ -28,18 +28,66 @@ function getDynamicQuery(type: string) {
     `
 }
 
-type localStorageType = {
+type LocalStorageItem = {
     loaded: number
     type: string
     scrollPosition: number
     cachedState: ProductInterface[]
 }
 
+interface LocalStorageType {
+    [key: string]: LocalStorageItem
+}
+
+const getLocalStorage = (type: string): LocalStorageItem => {
+    const productPagesData: LocalStorageType = JSON.parse(localStorage.getItem('productPagesData'))
+    if (!productPagesData) {
+        return null
+    }
+    const productPageData = productPagesData[type]
+    return productPageData
+}
+
+const updateLocalStorage = (
+    type: string,
+    fields: Array<{ field: string; value: string | number | ProductInterface[] }>
+) => {
+    const productPagesData: LocalStorageType = JSON.parse(localStorage.getItem('productPagesData'))
+
+    fields.forEach((field) => {
+        productPagesData[type][field.field] = field.value
+    })
+    localStorage.setItem('productPagesData', JSON.stringify(productPagesData))
+}
+
+const createLocalStorage = (type: string) => {
+    const productPagesData: LocalStorageType = JSON.parse(localStorage.getItem('productPagesData'))
+    if (!productPagesData) {
+        const newLocalStorage: LocalStorageType = {}
+        newLocalStorage[type] = {
+            type,
+            loaded: 0,
+            scrollPosition: 0,
+            cachedState: [],
+        }
+        return localStorage.setItem('productPagesData', JSON.stringify(newLocalStorage))
+    }
+    if (productPagesData[type]) {
+        return localStorage.setItem('productPagesData', JSON.stringify(productPagesData))
+    }
+
+    productPagesData[type] = {
+        type,
+        loaded: 0,
+        scrollPosition: 0,
+        cachedState: [],
+    }
+    return localStorage.setItem('productPagesData', JSON.stringify(productPagesData))
+}
+
 const Products = (): JSX.Element => {
     const router = useRouter()
-    const { data, loading, error, fetchMore } = useQuery(
-        getDynamicQuery(router.query.type.toString())
-    )
+    const { data, fetchMore } = useQuery(getDynamicQuery(router.query.type.toString()))
 
     const { products }: { products: ProductInterface[] } = data
     const [element, setElement] = useState(null)
@@ -62,72 +110,72 @@ const Products = (): JSX.Element => {
                     }
                 },
             })
-
-            const loaded: localStorageType = JSON.parse(localStorage.getItem('productPagesData'))
-            if (loaded) {
-                return localStorage.setItem(
-                    'productPagesData',
-                    JSON.stringify({
-                        loaded:
-                            products.length < loaded.cachedState.length
-                                ? loaded.cachedState.length
+            const type = router.query.type.toString()
+            const currentLocalStorage = getLocalStorage(type)
+            if (currentLocalStorage) {
+                return updateLocalStorage(type, [
+                    {
+                        field: 'loaded',
+                        value:
+                            products.length < currentLocalStorage.cachedState.length
+                                ? currentLocalStorage.cachedState.length
                                 : products.length,
-                        cachedState:
-                            products.length < loaded.cachedState.length
-                                ? loaded.cachedState
+                    },
+                    {
+                        field: 'cachedState',
+                        value:
+                            products.length < currentLocalStorage.cachedState.length
+                                ? currentLocalStorage.cachedState
                                 : products,
-                        type: loaded.type,
-                        scrollPosition: loaded.scrollPosition,
-                    })
-                )
+                    },
+                ])
             }
-
-            localStorage.setItem('loaded', JSON.stringify(products.length))
-
-            localStorage.setItem(
-                'productPagesData',
-                JSON.stringify({
-                    loaded: products.length,
-                    cachedState: products,
-                    type: router.query.type,
-                    scrollPosition: window.scrollY,
-                })
-            )
+            return updateLocalStorage(type, [
+                {
+                    field: 'loaded',
+                    value: products.length,
+                },
+                {
+                    field: 'cachedState',
+                    value: products,
+                },
+            ])
         },
-
         [data]
     )
 
     useEffect(() => {
-        function handleScroll(event) {
-            const loaded: localStorageType = JSON.parse(localStorage.getItem('productPagesData'))
+        const type = router.query.type.toString()
+        const currentLocalStorage: LocalStorageItem = getLocalStorage(type)
+        createLocalStorage(type)
+        function handleScroll() {
+            const currentLocalStorage1: LocalStorageItem = getLocalStorage(type)
 
-            if (loaded) {
-                localStorage.setItem(
-                    'productPagesData',
-                    JSON.stringify({
-                        loaded: loaded.loaded,
-                        cachedState: loaded.cachedState,
-                        type: router.query.type,
-                        scrollPosition: window.scrollY,
-                    })
-                )
+            if (currentLocalStorage1) {
+                updateLocalStorage(type, [
+                    {
+                        field: 'scrollPosition',
+                        value: window.scrollY,
+                    },
+                ])
             }
         }
-        const loaded: localStorageType = JSON.parse(localStorage.getItem('productPagesData'))
 
-        if (loaded) {
-            setProductsPreloaded(loaded.cachedState)
-            load(loaded.loaded).then(() => {
-                window.scrollTo({ top: loaded.scrollPosition })
+        if (currentLocalStorage) {
+            setProductsPreloaded(currentLocalStorage.cachedState)
+            load(currentLocalStorage.loaded).then(() => {
+                window.scrollTo({ top: currentLocalStorage.scrollPosition })
 
                 setPreloaded(true)
             })
         } else {
             setPreloaded(true)
         }
-        window.addEventListener('scroll', handleScroll, true)
-        return window.removeEventListener('scroll', handleScroll)
+
+        window.addEventListener('scroll', handleScroll)
+        return () => {
+            window.removeEventListener('scroll', handleScroll)
+        }
     }, [])
 
     useEffect(() => {
@@ -161,7 +209,6 @@ const Products = (): JSX.Element => {
                 <ul className={styles.productsContainer}>
                     {productsPreloaded.map((product) => (
                         <li ref={setElement} key={product.id}>
-                            <span>{product.id}</span>
                             <ProductBox product={product} />
                         </li>
                     ))}
@@ -171,11 +218,13 @@ const Products = (): JSX.Element => {
     )
 }
 
-export async function getServerSideProps(context) {
+export const getServerSideProps: GetServerSideProps = async (
+    context: GetServerSidePropsContext
+) => {
     const apolloClient = initializeApollo()
 
     await apolloClient.query({
-        query: getDynamicQuery(context.query.type),
+        query: getDynamicQuery(context.query.type.toString()),
     })
     return {
         props: {

@@ -33,8 +33,21 @@ const NavbarItem = ({ NavItem }: NavigationLinkProps): JSX.Element => {
         [dropdownActive]
     )
 
+    const handleClick = useCallback(
+        (event: FocusEvent) => {
+            if (!dropdownContainer.current.contains(event.target)) {
+                setDropdownActive(false)
+                document.removeEventListener('mousedown', handleClick)
+            }
+        },
+        [dropdownActive]
+    )
+
     useEffect(() => {
-        document.removeEventListener('focusin', handleFocus)
+        return () => {
+            document.removeEventListener('mousedown', handleClick)
+            document.removeEventListener('focusin', handleFocus)
+        }
     }, [])
 
     const updateClicked = () => {
@@ -63,6 +76,7 @@ const NavbarItem = ({ NavItem }: NavigationLinkProps): JSX.Element => {
     return (
         <div ref={dropdownContainer}>
             <button
+                name={`dropdown button for ${NavItem.label}`}
                 className={[
                     styles.navButton,
                     NavItem.isLogo ? styles.logo : '',
@@ -74,9 +88,12 @@ const NavbarItem = ({ NavItem }: NavigationLinkProps): JSX.Element => {
                 type="button"
                 onClick={() => {
                     setDropdownActive(!dropdownActive)
+                    document.addEventListener('mousedown', handleClick)
+
                     updateClicked()
                 }}
                 onFocus={() => {
+                    document.addEventListener('mousedown', handleClick)
                     document.addEventListener('focusin', handleFocus)
                 }}
             >
